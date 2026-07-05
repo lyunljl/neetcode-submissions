@@ -1,0 +1,33 @@
+class Solution:
+    def leastInterval(self, tasks: List[str], n: int) -> int:
+        
+        """
+        the wat to optimize the time needed is to start... we can keep track of which letter
+        is currently most frequent using a max-heap
+        ... how do we track when an item can be reused?
+        """
+        count = {}
+        daheap = []
+        for task in tasks:
+            if task not in count:
+                count[task] = 1
+            else:
+                count[task] += 1
+
+        for task, freq in count.items():
+            heapq.heappush(daheap, -freq)
+    
+        daqueue = deque() # this will store tuples that track (value, time of return)
+        time = 0
+
+        while daheap or daqueue:
+            time += 1
+            if daheap:
+                count = 1 + heapq.heappop(daheap)
+                if count:
+                    daqueue.append([count, time + n])
+            
+            if daqueue and daqueue[0][1] == time:
+                heapq.heappush(daheap, daqueue.popleft()[0])
+                
+        return time
